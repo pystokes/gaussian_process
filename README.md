@@ -1,2 +1,3 @@
 # gaussian_process
-GPR practice for Rust
+
+Practice of Gaussian Process Regression by Rust
