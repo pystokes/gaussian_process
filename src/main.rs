@@ -13,11 +13,20 @@ fn main() {
     }
     let csv_file = &args[1];
 
-    // Load CSV
-    let _result = lib::utils::load_csv(csv_file);
+    // Load base data as 2D vector
+    let base = match lib::utils::load_base(csv_file) {
+        Ok(csv) => csv,
+        Err(e) => {
+            panic!("There was a problem to load csv file] {:?}", e)
+        },
+    };
+
+    // Generate sample time-series data
+    let ts = lib::generate_ts::run(base);
 
     // Preprocess(ad hoc)
-    lib::preprocess::base_to_input();
+    let ts_with_noise = lib::preprocess::run(ts);
+    println!("{:?}", ts_with_noise);
 
     // Train
 
