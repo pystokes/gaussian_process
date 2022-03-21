@@ -13,23 +13,28 @@ fn main() {
     }
     let csv_file = &args[1];
 
-    // Load base data as 2D vector
-    let base = match lib::utils::load_base(csv_file) {
-        Ok(csv) => csv,
-        Err(e) => {
-            panic!("There was a problem to load csv file] {:?}", e)
-        },
-    };
+    // Generate Time-Series data
+    // Return:
+    //   - year
+    //   - month
+    //   - day
+    //   - n_day
+    //   - base
+    //   - new_year_holiday_ratio
+    //   - baseh_with_holiday_weighted
+    //   - base_with_noise
+    let ts = lib::generate_ts::procedure(csv_file);
 
-    // Generate sample time-series data
-    let ts = lib::generate_ts::run(base);
+    // Preprocess
+    lib::preprocess::procedure();
+    for data in &ts[0..5] {
+        println!("{:?}", data);
+    }
 
-    // Preprocess(ad hoc)
-    let ts_with_noise = lib::preprocess::run(ts);
-    println!("{:?}", ts_with_noise);
+    // Define model
 
     // Train
 
     // Predict
-
+    
 }
