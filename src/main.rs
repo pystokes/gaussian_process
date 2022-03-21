@@ -42,7 +42,6 @@ fn main() {
     ];
     lib::utils::save_ts_as_csv(&ts, col_names, "ts.csv");
 
-
     for data in &ts[0..5] {
         println!("{:?}", data);
     }
