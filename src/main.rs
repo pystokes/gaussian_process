@@ -14,7 +14,7 @@ fn main() {
     let csv_file = &args[1];
 
     // Generate Time-Series data
-    // Return:
+    // Return: (Note that this may be updated)
     //   - year
     //   - month
     //   - day
@@ -27,6 +27,22 @@ fn main() {
 
     // Preprocess
     lib::preprocess::procedure();
+
+    // Save data before subsequent processes
+    // (Note that this may be updated as above)
+    let col_names = vec![
+        String::from("year"),
+        String::from("month"),
+        String::from("day"),
+        String::from("n_day"),
+        String::from("base"),
+        String::from("new_year_holiday_ratio"),
+        String::from("base_with_holiday_ratio"),
+        String::from("base_with_noise"),
+    ];
+    lib::utils::save_ts_as_csv(&ts, col_names, "ts.csv");
+
+
     for data in &ts[0..5] {
         println!("{:?}", data);
     }
