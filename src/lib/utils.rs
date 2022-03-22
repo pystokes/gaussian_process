@@ -19,3 +19,21 @@ pub fn save_ts_as_csv(
     let mut f = File::create(save_path).unwrap();
     f.write_all(contents.join("").as_bytes()).unwrap();
 }
+
+pub fn extract_data(ts: Vec<Vec<f64>>) -> (Vec<Vec<f64>>, Vec<f64>) {
+    // Define variables to return
+    let mut inputs: Vec<Vec<f64>> = Vec::new();
+    let mut outputs: Vec<f64> = Vec::new();
+
+    for row in &ts {
+        // One pair of data
+        let input = vec![row[3]];
+        let output = row[7];
+
+        // Append
+        inputs.push(input);
+        outputs.push(output);
+    }
+
+    return (inputs, outputs)
+}

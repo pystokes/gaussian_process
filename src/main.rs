@@ -42,9 +42,12 @@ fn main() {
     ];
     lib::utils::save_ts_as_csv(&ts, col_names, "ts.csv");
 
-    for data in &ts[0..5] {
-        println!("{:?}", data);
-    }
+    // Extract input and output of train and test
+    let (inputs, outputs) = lib::utils::extract_data(ts);
+    println!("inputs(head=5): {:?}", &inputs[..5]);
+    println!("outputs(head=5): {:?}", &outputs[..5]);
+
+    // Generate explanatory variable
 
     // Define model
 
