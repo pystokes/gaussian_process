@@ -1,5 +1,6 @@
 use std::env;
 
+use friedrich::gaussian_process::GaussianProcess;
 mod lib;
 
 fn main() {
@@ -43,16 +44,22 @@ fn main() {
     lib::utils::save_ts_as_csv(&ts, col_names, "ts.csv");
 
     // Extract input and output of train and test
-    let (inputs, outputs) = lib::utils::extract_data(ts);
-    println!("inputs(head=5): {:?}", &inputs[..5]);
-    println!("outputs(head=5): {:?}", &outputs[..5]);
+    let (train_inputs, train_outputs) = lib::utils::extract_data(ts);
+    println!("inputs(head=5): {:?}", &train_inputs[..5]);
+    println!("outputs(head=5): {:?}", &train_outputs[..5]);
 
     // Generate explanatory variable
+    let test_inputs = vec![vec![1.], vec![2.]]; // Temporal sample
 
-    // Define model
-
-    // Train
+    // Define model and fit
+    println!("Fitting...");
+    let model = GaussianProcess::default(train_inputs, train_outputs);
 
     // Predict
-    
+    println!("Predicting means...");
+    let means = model.predict(&test_inputs);
+    println!("Predicting variances...");
+    let variances = model.predict_variance(&test_inputs);
+    println!("Means: {:?}", means);
+    println!("Variances: {:?}", variances);
 }
