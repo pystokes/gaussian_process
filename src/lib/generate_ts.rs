@@ -65,7 +65,7 @@ fn base_to_multi_year(base: Vec<Vec<f64>>) -> Vec<Vec<f64>> {
     let mut ts = Vec::new();
 
     // Generate multi-year data
-    for year in 2012..2022 {
+    for year in 2019..2022 {
 
         // Generate data for each day of each year
         for row in &base {
