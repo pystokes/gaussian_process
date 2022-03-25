@@ -23,7 +23,7 @@ pub fn create_dir_all(dir_home: &str) -> std::io::Result<String> {
     Ok(dir_path)
 }
 
-pub fn save_ts_as_csv(
+pub fn save_as_csv(
     ts: &Vec<Vec<f64>>,
     column_names: Vec<String>,
     save_path: &str) {

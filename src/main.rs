@@ -17,17 +17,8 @@ fn main() {
         let csv_file = &args[1];
 
         // Generate Time-Series data
-        // Return: (Note that this may be updated)
-        //   - year
-        //   - month
-        //   - day
-        //   - n_day
-        //   - base
-        //   - new_year_holiday_ratio
-        //   - baseh_with_holiday_weighted
-        //   - base_with_noise
         let ts = lib::generate_ts::procedure(csv_file);
-        let col_names = vec![
+        let ts_col_names = vec![
             String::from("year"),
             String::from("month"),
             String::from("day"),
@@ -48,19 +39,22 @@ fn main() {
             Err(_) => panic!("Failed to make directory."),
         };
         let ts_save_path = format!("{}/{}", save_dir, "ts.csv");
-        lib::utils::save_ts_as_csv(&ts, col_names, &ts_save_path);
+        lib::utils::save_as_csv(&ts, ts_col_names, &ts_save_path);
 
         // Extract training input and output data
         let (train_inputs, train_outputs) = lib::utils::extract_data(ts);
 
         // Generate input data in prediction term
         const N_DAY: i32 = 366; // include leap day (2/29)
+        let test_col_names = vec![String::from("var")];
         let mut test_inputs = Vec::new();
         for idx in 0..N_DAY {
             test_inputs.push(vec![(idx+1) as f64]);
         }
 
-        // Save input data
+        // Save input data in prediction term
+        let test_save_path = format!("{}/{}", save_dir, "input.csv");
+        lib::utils::save_as_csv(&test_inputs, test_col_names, &test_save_path);
 
     } else if exec_mode == "train" {
 
