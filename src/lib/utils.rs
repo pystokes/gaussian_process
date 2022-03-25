@@ -4,6 +4,16 @@ use std::io::prelude::*;
 
 use chrono::Utc;
 
+pub fn show_usage_and_exit(&args) {
+    eprintln!("Usage: {} preprocess CSV_PATH", &args[0]);
+    eprintln!("Example] {} preprocess sample.csv", &args[0]);
+    eprintln!("Usage: {} train /PATH/TO/ts.csv", &args[0]);
+    eprintln!("Example] {} train ./result/YYYYMMDD-HHMMSS/ts.csv", &args[0]);
+    eprintln!("Usage: {} predict /PATH/TO/MODEL", &args[0]);
+    eprintln!("Example] {} predict ./result/YYYYMMDD-HHMMSS/model", &args[0]);
+    std::process::exit(1);
+}
+
 pub fn create_dir_all(dir_home: &str) -> std::io::Result<String> {
     let now = Utc::now().format("%Y%m%d-%H%M%S").to_string();
     let dir_path = format!("{}/{}", dir_home, now);
