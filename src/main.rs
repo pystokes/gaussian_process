@@ -33,7 +33,6 @@ fn main() {
         lib::preprocess::procedure();
 
         // Save all data before subsequent processes
-        // (Note that this may be updated as above)
         let save_dir = match lib::utils::create_dir_all("./result") {
             Ok(path) => path,
             Err(_) => panic!("Failed to make directory."),
@@ -43,6 +42,7 @@ fn main() {
 
         // Extract training input and output data
         let (train_inputs, train_outputs) = lib::utils::extract_data(ts);
+        // Save training input and output data
 
         // Generate input data in prediction term
         const N_DAY: i32 = 366; // include leap day (2/29)
@@ -67,6 +67,8 @@ fn main() {
         // Save trained model
 
     } else if exec_mode == "predict" {
+
+        // Load input data in predictin term
 
         // Load trained model
 
