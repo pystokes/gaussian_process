@@ -82,7 +82,7 @@ fn main() {
 
         // Load explanatory variables
         let train_exp_path = format!("{}/{}", save_dir, "train_exp.csv");
-        let train_exp = match lib::train_utils::load_train_exp(&train_exp_path) {
+        let train_exp = match lib::data_utils::load_exp(&train_exp_path) {
             Ok(csv) => csv,
             Err(e) => {
                 panic!("There was a problem to load csv file] {:?}", e)
@@ -90,45 +90,52 @@ fn main() {
         };
         // Load objective variables
         let train_obj_path = format!("{}/{}", save_dir, "train_obj.csv");
-        let train_obj = match lib::train_utils::load_train_obj(&train_obj_path) {
+        let train_obj = match lib::data_utils::load_obj(&train_obj_path) {
             Ok(csv) => csv,
             Err(e) => {
                 panic!("There was a problem to load csv file] {:?}", e)
             },
         };
-        println!("Train Exp: {:?}", train_exp);
-        println!("Train Obj: {:?}", train_obj);
 
         // Define model and fit
         println!("Fitting...");
-        //let model = GaussianProcess::default(train_exp, train_obj);
+        let model = GaussianProcess::default(train_exp, train_obj);
 
         // Save trained model
         //let model_save_path = format!("{}/{}", save_dir, "model");
         //let mut f = File::create(model_save_path).unwrap();
         //f.write_all(model).unwrap();
 
+        // Load test data
+        let test_exp_path = format!("{}/{}", save_dir, "test_exp.csv");
+        let test_exp = match lib::data_utils::load_exp(&test_exp_path) {
+            Ok(csv) => csv,
+            Err(e) => {
+                panic!("There was a problem to load csv file] {:?}", e)
+            },
+        };
+
         // Predict
         println!("Predicting means...");
-        //let means = model.predict(&train_exp);
+        let means = model.predict(&test_exp);
         println!("Predicting variances...");
-        //let variances = model.predict_variance(&train_exp);
+        let variances = model.predict_variance(&test_exp);
 
         // Calculate additional information
-        //let stds = lib::postprocess::calc_std(&variances);
-        //let (uppers, lowers) = lib::postprocess::calc_bounds(&means, &stds);
+        let stds = lib::postprocess::calc_std(&variances);
+        let (uppers, lowers) = lib::postprocess::calc_bounds(&means, &stds);
 
         // Save results
-        //let result_save_path = format!("{}/{}", save_dir, "result.csv");
-        //lib::utipostprocessls::save_results(
-        //    train_exp,
-        //    means,
-        //    variances,
-        //    stds,
-        //    uppers,
-        //    lowers,
-        //    &result_save_path
-        //);
+        let result_save_path = format!("{}/{}", save_dir, "result.csv");
+        lib::postprocess::save_results(
+           test_exp,
+           means,
+           variances,
+           stds,
+           uppers,
+           lowers,
+           &result_save_path
+        );
     } else {
         lib::utils::show_usage_and_exit(&args[0]);
     }

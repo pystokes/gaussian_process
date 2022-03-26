@@ -4,16 +4,16 @@ use std::io::prelude::*;
 use serde::Deserialize;
 
 #[derive(Deserialize)]
-struct TrainExpRecord {
+struct ExpRecord {
     exp_var: f64,
 }
 
 #[derive(Deserialize)]
-struct TrainObjRecord {
+struct ObjRecord {
     obj_var: f64,
 }
 
-pub fn load_train_exp(csv_path: &String) -> Result<Vec<Vec<f64>>, csv::Error> {
+pub fn load_exp(csv_path: &String) -> Result<Vec<Vec<f64>>, csv::Error> {
     // Open and load CSV file
     let mut csv_rows = String::new();
     let mut f = File::open(csv_path).expect("File not found.");
@@ -25,7 +25,7 @@ pub fn load_train_exp(csv_path: &String) -> Result<Vec<Vec<f64>>, csv::Error> {
     // Convert to 2D vector
     let mut train_exp = Vec::new();
     for record in reader.deserialize() {
-        let record: TrainExpRecord = record?;
+        let record: ExpRecord = record?;
         let row = vec![
             record.exp_var,
         ];
@@ -36,7 +36,7 @@ pub fn load_train_exp(csv_path: &String) -> Result<Vec<Vec<f64>>, csv::Error> {
     Ok(train_exp)
 }
 
-pub fn load_train_obj(csv_path: &String) -> Result<Vec<f64>, csv::Error> {
+pub fn load_obj(csv_path: &String) -> Result<Vec<f64>, csv::Error> {
     // Open and load CSV file
     let mut csv_rows = String::new();
     let mut f = File::open(csv_path).expect("File not found.");
@@ -48,7 +48,7 @@ pub fn load_train_obj(csv_path: &String) -> Result<Vec<f64>, csv::Error> {
     // Convert to 2D vector
     let mut train_obj = Vec::new();
     for record in reader.deserialize() {
-        let record: TrainObjRecord = record?;
+        let record: ObjRecord = record?;
         train_obj.push(record.obj_var);
     }
 
