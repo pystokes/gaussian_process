@@ -5,7 +5,7 @@ use rand_distr::{Uniform, Distribution};
 use serde::Deserialize;
 
 #[derive(Deserialize)]
-struct Record {
+struct BaseRecord {
     month: f64,
     day: f64,
     n_day: f64,
@@ -46,7 +46,7 @@ fn load_base(csv_file: &String) -> Result<Vec<Vec<f64>>, csv::Error> {
     // Convert to 2D vector
     let mut base = Vec::new();
     for record in reader.deserialize() {
-        let record: Record = record?;
+        let record: BaseRecord = record?;
         let row = vec![
             record.month,
             record.day,
