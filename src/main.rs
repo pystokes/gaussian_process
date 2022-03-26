@@ -25,14 +25,12 @@ fn main() {
             }
         },
         _ => {
-            let path: Vec<&str> = args[2].split('/').collect();
-            let path = &path[..(path.len()-1)];
-            let path = path.join("/");    
-
+            let path = args[2].to_string();
+            println!("Save directory: {}", path);
             path
-        }
+        },
     };
-    println!("Save directory: {}", save_dir);
+    
 
     // Run each execution mode
     if exec_mode == "preprocess" {
@@ -57,19 +55,20 @@ fn main() {
 
         // Save all data before subsequent processes
         let ts_save_path = format!("{}/{}", save_dir, "ts.csv");
-        lib::utils::save_as_csv(&ts, ts_col_names, &ts_save_path);
+        lib::utils::save_as_multi_col_csv(&ts, ts_col_names, &ts_save_path);
 
         // Extract training exp and obj data
         let (train_exp, train_obj) = lib::utils::extract_data(ts);
+
         // Save training input and output data
         let train_input_save_path = format!("{}/{}", save_dir, "train_exp.csv");
-        lib::utils::save_as_csv(&train_exp, vec![String::from("exp_var")], &train_input_save_path);
+        lib::utils::save_as_multi_col_csv(&train_exp, vec![String::from("exp_var")], &train_input_save_path);
         let train_output_save_path = format!("{}/{}", save_dir, "train_obj.csv");
-        lib::utils::save_as_single_column_csv(train_obj, vec![String::from("obj_var")], &train_output_save_path);
+        lib::utils::save_as_single_col_csv(&train_obj, vec![String::from("obj_var")], &train_output_save_path);
 
         // Generate input data in prediction term
         const N_DAY: i32 = 366; // include leap day (2/29)
-        let test_col_names = vec![String::from("epx_var")];
+        let test_col_names = vec![String::from("exp_var")];
         let mut test_exp = Vec::new();
         for idx in 0..N_DAY {
             test_exp.push(vec![(idx+1) as f64]);
@@ -77,12 +76,28 @@ fn main() {
 
         // Save input data in test term
         let test_save_path = format!("{}/{}", save_dir, "test_exp.csv");
-        lib::utils::save_as_csv(&test_exp, test_col_names, &test_save_path);
+        lib::utils::save_as_multi_col_csv(&test_exp, test_col_names, &test_save_path);
 
     } else if exec_mode == "train" {
 
-        // Load training input and output data
-
+        // Load explanatory variables
+        let train_exp_path = format!("{}/{}", save_dir, "train_exp.csv");
+        let train_exp = match lib::train_utils::load_train_exp(&train_exp_path) {
+            Ok(csv) => csv,
+            Err(e) => {
+                panic!("There was a problem to load csv file] {:?}", e)
+            },
+        };
+        // Load objective variables
+        let train_obj_path = format!("{}/{}", save_dir, "train_obj.csv");
+        let train_obj = match lib::train_utils::load_train_obj(&train_obj_path) {
+            Ok(csv) => csv,
+            Err(e) => {
+                panic!("There was a problem to load csv file] {:?}", e)
+            },
+        };
+        println!("Train Exp: {:?}", train_exp);
+        println!("Train Obj: {:?}", train_obj);
 
         // Define model and fit
         println!("Fitting...");
@@ -100,12 +115,12 @@ fn main() {
         //let variances = model.predict_variance(&train_exp);
 
         // Calculate additional information
-        //let stds = lib::utils::calc_std(&variances);
-        //let (uppers, lowers) = lib::utils::calc_bounds(&means, &stds);
+        //let stds = lib::postprocess::calc_std(&variances);
+        //let (uppers, lowers) = lib::postprocess::calc_bounds(&means, &stds);
 
         // Save results
         //let result_save_path = format!("{}/{}", save_dir, "result.csv");
-        //lib::utils::save_results(
+        //lib::utipostprocessls::save_results(
         //    train_exp,
         //    means,
         //    variances,
