@@ -1,6 +1,9 @@
 use std::fs::File;
 use std::io::prelude::*;
 
+use friedrich::gaussian_process::GaussianProcess;
+use friedrich::kernel::Kernel;
+use friedrich::prior::Prior;
 use serde::Deserialize;
 
 #[derive(Deserialize)]
@@ -54,4 +57,10 @@ pub fn load_obj(csv_path: &String) -> Result<Vec<f64>, csv::Error> {
 
     // Return 2D vector
     Ok(train_obj)
+}
+
+pub fn save_model<T1: Kernel, T2: Prior>(model: &GaussianProcess<T1, T2>, save_path: &String) {
+    println!("lib::file_io::handle_model");
+    let _model = model;
+    let _save_path = save_path;
 }
