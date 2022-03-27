@@ -82,7 +82,7 @@ fn main() {
 
         // Load explanatory variables
         let train_exp_path = format!("{}/{}", save_dir, "train_exp.csv");
-        let train_exp = match lib::data_utils::load_exp(&train_exp_path) {
+        let train_exp = match lib::csv_io::load_exp(&train_exp_path) {
             Ok(csv) => csv,
             Err(e) => {
                 panic!("There was a problem to load csv file] {:?}", e)
@@ -90,7 +90,7 @@ fn main() {
         };
         // Load objective variables
         let train_obj_path = format!("{}/{}", save_dir, "train_obj.csv");
-        let train_obj = match lib::data_utils::load_obj(&train_obj_path) {
+        let train_obj = match lib::csv_io::load_obj(&train_obj_path) {
             Ok(csv) => csv,
             Err(e) => {
                 panic!("There was a problem to load csv file] {:?}", e)
@@ -108,7 +108,7 @@ fn main() {
 
         // Load test data
         let test_exp_path = format!("{}/{}", save_dir, "test_exp.csv");
-        let test_exp = match lib::data_utils::load_exp(&test_exp_path) {
+        let test_exp = match lib::csv_io::load_exp(&test_exp_path) {
             Ok(csv) => csv,
             Err(e) => {
                 panic!("There was a problem to load csv file] {:?}", e)
