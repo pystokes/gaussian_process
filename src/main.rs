@@ -1,6 +1,4 @@
 use std::env;
-use std::fs::File;
-use std::io::prelude::*;
 
 use friedrich::gaussian_process::GaussianProcess;
 mod lib;
@@ -18,6 +16,12 @@ fn main() {
 
     // Set save directory
     let save_dir = match exec_mode.as_ref() {
+        "generate" => {
+            match lib::utils::create_dir_all("./dataset") {
+                Ok(path) => path,
+                Err(_) => panic!("Failed to make directory."),
+            }
+        },
         "preprocess" => {
             match lib::utils::create_dir_all("./result") {
                 Ok(path) => path,
@@ -33,7 +37,7 @@ fn main() {
     
 
     // Run each execution mode
-    if exec_mode == "preprocess" {
+    if exec_mode == "generate" {
         // Get CSV path
         let csv_path = &args[2];
 
@@ -50,21 +54,33 @@ fn main() {
             String::from("base_with_noise"),
         ];
 
-        // Preprocess
-        lib::preprocess::procedure();
-
-        // Save all data before subsequent processes
+        // Save
         let ts_save_path = format!("{}/{}", save_dir, "ts.csv");
-        lib::utils::save_as_multi_col_csv(&ts, ts_col_names, &ts_save_path);
+        lib::file_io::save_as_multi_col_csv(&ts, ts_col_names, &ts_save_path);
+
+    } else if exec_mode == "preprocess" {
+        // Get CSV path
+        let csv_path = &args[2];
+
+        // Load data
+        let ts = match lib::file_io::load_all(csv_path) {
+            Ok(csv) => csv,
+            Err(e) => {
+                panic!("There was a problem to load csv file] {:?}", e)
+            },
+        };
+
+        // Preprocess
+        let prerocessed_ts = lib::preprocess::procedure(&ts);
 
         // Extract training exp and obj data
-        let (train_exp, train_obj) = lib::utils::extract_data(ts);
+        let (train_exp, train_obj) = lib::utils::extract_data(prerocessed_ts);
 
         // Save training input and output data
         let train_input_save_path = format!("{}/{}", save_dir, "train_exp.csv");
-        lib::utils::save_as_multi_col_csv(&train_exp, vec![String::from("exp_var")], &train_input_save_path);
+        lib::file_io::save_as_multi_col_csv(&train_exp, vec![String::from("exp_var")], &train_input_save_path);
         let train_output_save_path = format!("{}/{}", save_dir, "train_obj.csv");
-        lib::utils::save_as_single_col_csv(&train_obj, vec![String::from("obj_var")], &train_output_save_path);
+        lib::file_io::save_as_single_col_csv(&train_obj, vec![String::from("obj_var")], &train_output_save_path);
 
         // Generate input data in prediction term
         const N_DAY: i32 = 366; // include leap day (2/29)
@@ -76,7 +92,7 @@ fn main() {
 
         // Save input data in test term
         let test_save_path = format!("{}/{}", save_dir, "test_exp.csv");
-        lib::utils::save_as_multi_col_csv(&test_exp, test_col_names, &test_save_path);
+        lib::file_io::save_as_multi_col_csv(&test_exp, test_col_names, &test_save_path);
 
     } else if exec_mode == "train" {
 
@@ -104,9 +120,6 @@ fn main() {
         // Save trained model
         let model_save_path = format!("{}/{}", save_dir, "trained_model");
         lib::file_io::save_model(&model, &model_save_path);
-        //let model_save_path = format!("{}/{}", save_dir, "model");
-        //let mut f = File::create(model_save_path).unwrap();
-        //f.write_all(model).unwrap();
 
         // Load test data
         let test_exp_path = format!("{}/{}", save_dir, "test_exp.csv");
