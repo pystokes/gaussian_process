@@ -3,3 +3,4 @@ pub mod generate_ts;
 pub mod postprocess;
 pub mod preprocess;
 pub mod utils;
+pub mod visualize;

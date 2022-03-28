@@ -151,6 +151,30 @@ fn main() {
            lowers,
            &result_save_path
         );
+    } else if exec_mode == "visualize" {
+        // Load result.csv
+        let result_path = format!("{}/{}", save_dir, "result.csv");
+        let result = match lib::file_io::load_result(&result_path) {
+            Ok(csv) => csv,
+            Err(e) => {
+                panic!("There was a problem to load csv file] {:?}", e)
+            },
+        };
+
+        // Extract data to draw figure
+        let mut x = Vec::new();
+        let mut mean = Vec::new();
+        let mut upper = Vec::new();
+        let mut lower = Vec::new();
+        for row in result {
+            x.push(row[0]);
+            mean.push(row[1]);
+            upper.push(row[4]);
+            lower.push(row[5]);
+        }
+
+        lib::visualize::draw_fig(x, mean, upper, lower);
+
     } else {
         lib::utils::show_usage_and_exit(&args[0]);
     }

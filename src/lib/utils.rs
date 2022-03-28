@@ -11,6 +11,8 @@ pub fn show_usage_and_exit(args: &str) {
     eprintln!("Example] {} train ./result/YYYYMMDD-HHMMSS", args);
     eprintln!("Usage: {} predict RESULT_DIR", args);
     eprintln!("Example] {} predict ./result/YYYYMMDD-HHMMSS", args);
+    eprintln!("Usage: {} visualize RESULT_DIR", args);
+    eprintln!("Example] {} visualize ./result/YYYYMMDD-HHMMSS", args);
     std::process::exit(1);
 }
 

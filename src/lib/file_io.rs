@@ -7,7 +7,7 @@ use friedrich::prior::Prior;
 use serde::Deserialize;
 
 #[derive(Deserialize)]
-struct AllRecord {
+struct TSRecord {
     year: f64,
     month: f64,
     day: f64,
@@ -26,6 +26,16 @@ struct ExpRecord {
 #[derive(Deserialize)]
 struct ObjRecord {
     obj_var: f64,
+}
+
+#[derive(Deserialize)]
+struct ResultRecord {
+    input: f64,
+    mean: f64,
+    variance: f64,
+    std: f64,
+    upper: f64,
+    lower: f64,
 }
 
 pub fn save_as_single_col_csv(
@@ -77,7 +87,7 @@ pub fn load_all(csv_path: &String) -> Result<Vec<Vec<f64>>, csv::Error> {
     // Convert to 2D vector
     let mut ts = Vec::new();
     for record in reader.deserialize() {
-        let record: AllRecord = record?;
+        let record: TSRecord = record?;
         let row = vec![
             record.year,
             record.month,
@@ -136,6 +146,34 @@ pub fn load_obj(csv_path: &String) -> Result<Vec<f64>, csv::Error> {
 
     // Return 2D vector
     Ok(train_obj)
+}
+
+pub fn load_result(csv_path: &String) -> Result<Vec<Vec<f64>>, csv::Error> {
+    // Open and load CSV file
+    let mut csv_rows = String::new();
+    let mut f = File::open(csv_path).expect("File not found.");
+    f.read_to_string(&mut csv_rows).expect("Something went wrong reading the file");
+
+    // Get reader
+    let mut reader = csv::Reader::from_reader(csv_rows.as_bytes());
+    
+    // Convert to 2D vector
+    let mut ts = Vec::new();
+    for record in reader.deserialize() {
+        let record: ResultRecord = record?;
+        let row = vec![
+            record.input,
+            record.mean,
+            record.variance,
+            record.std,
+            record.upper,
+            record.lower,
+        ];
+        ts.push(row);
+    }
+
+    // Return 2D vector
+    Ok(ts)
 }
 
 pub fn save_model<T1: Kernel, T2: Prior>(model: &GaussianProcess<T1, T2>, save_path: &String) {
