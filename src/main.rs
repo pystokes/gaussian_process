@@ -173,7 +173,8 @@ fn main() {
             lower.push(row[5]);
         }
 
-        lib::visualize::draw_fig(x, mean, upper, lower);
+        let fig_save_path = format!("{}/{}", save_dir, "fig.png");
+        lib::visualize::draw_fig(x, mean, upper, lower, fig_save_path);
 
     } else {
         lib::utils::show_usage_and_exit(&args[0]);
