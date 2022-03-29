@@ -118,7 +118,7 @@ fn main() {
         let model = GaussianProcess::default(train_exp, train_obj);
 
         // Save trained model
-        let model_save_path = format!("{}/{}", save_dir, "trained_model");
+        let model_save_path = format!("{}/{}", save_dir, "gp.model");
         lib::file_io::save_model(&model, &model_save_path);
 
         // Load test data
