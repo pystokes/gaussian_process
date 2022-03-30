@@ -4,7 +4,7 @@ use std::io::prelude::*;
 use friedrich::gaussian_process::GaussianProcess;
 use friedrich::kernel::Kernel;
 use friedrich::prior::Prior;
-use serde::{Serialize, Deserialize };
+use serde::{Serialize, Deserialize};
 
 #[derive(Deserialize)]
 struct TSRecord {
