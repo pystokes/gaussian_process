@@ -1,9 +1,10 @@
 use std::env;
+use std::fs;
 use std::fs::File;
 use std::io::prelude::*;
 
 use friedrich::gaussian_process::GaussianProcess;
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
 mod lib;
 
@@ -131,6 +132,26 @@ fn main() {
         let prior_serialized = serde_json::to_string_pretty(&model.prior).unwrap();
         let mut f = File::create(prior_save_path).unwrap();
         f.write_all(prior_serialized.as_bytes()).unwrap();
+        // Save trained model (noise)
+        let noise_save_path = format!("{}/{}", save_dir, "model_noise.json");
+        let noise_serialized = serde_json::to_string_pretty(&model.noise).unwrap();
+        let mut f = File::create(noise_save_path).unwrap();
+        f.write_all(noise_serialized.as_bytes()).unwrap();
+
+    } else if exec_mode == "predict" {
+
+        // Load model
+        let kernel_save_path = format!("{}/{}", save_dir, "model_kernel.json");
+        let prior_save_path = format!("{}/{}", save_dir, "model_prior.json");
+        let noise_save_path = format!("{}/{}", save_dir, "model_noise.json");
+        let kernel_json = fs::read_to_string(kernel_save_path).expect("Faild to load model_kernel.json");
+        let prior_json = fs::read_to_string(prior_save_path).expect("Faild to load model_prior.json");
+        let noise_json = fs::read_to_string(noise_save_path).expect("Faild to load noise_prior.json");
+
+        let mut model = GaussianProcess::default(vec![vec![1.], vec![2.]], vec![1., 2.]);
+        model.kernel = serde_json::from_str(kernel_json.as_ref()).unwrap();
+        model.prior = serde_json::from_str(prior_json.as_ref()).unwrap();
+        model.noise = serde_json::from_str(noise_json.as_ref()).unwrap();
 
         // Load test data
         let test_exp_path = format!("{}/{}", save_dir, "test_exp.csv");
@@ -162,6 +183,7 @@ fn main() {
           lowers,
           &result_save_path
         );
+
     } else if exec_mode == "visualize" {
         // Load result.csv
         let result_path = format!("{}/{}", save_dir, "result.csv");
