@@ -184,5 +184,5 @@ pub fn save_model<T: Kernel, U: Prior>(model: &GaussianProcess<T, U>, save_path:
     let serialized = model.serialize();
 
     let mut f = File::create(save_path).unwrap();
-    f.write_all(serialized).unwrap();
+    //f.write_all(serialized).unwrap();
 }
