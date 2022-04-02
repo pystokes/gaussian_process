@@ -122,21 +122,31 @@ fn main() {
         println!("Fitting...");
         let model = GaussianProcess::default(train_exp, train_obj);
 
-        // Save trained model (kernel)
-        let kernel_save_path = format!("{}/{}", save_dir, "model_kernel.json");
-        let kernel_serialized = serde_json::to_string_pretty(&model.kernel).unwrap();
-        let mut f = File::create(kernel_save_path).unwrap();
-        f.write_all(kernel_serialized.as_bytes()).unwrap();
-        // Save trained model (prior)
-        let prior_save_path = format!("{}/{}", save_dir, "model_prior.json");
-        let prior_serialized = serde_json::to_string_pretty(&model.prior).unwrap();
-        let mut f = File::create(prior_save_path).unwrap();
-        f.write_all(prior_serialized.as_bytes()).unwrap();
-        // Save trained model (noise)
-        let noise_save_path = format!("{}/{}", save_dir, "model_noise.json");
-        let noise_serialized = serde_json::to_string_pretty(&model.noise).unwrap();
-        let mut f = File::create(noise_save_path).unwrap();
-        f.write_all(noise_serialized.as_bytes()).unwrap();
+        let model_save_path = format!("{}/{}", save_dir, "model_kernel.json");
+        //let model_serialized = serde_json::to_string_pretty(&model).unwrap();
+        let mut f = File::create(model_save_path).unwrap();
+        bincode::serialize_into(&mut f, &model).unwrap();
+        // let bytes = bincode::serialize(&model).unwrap();
+
+        // let model_serialized = model.as_bytes().unwrap();
+        // let mut f = File::create(model_save_path).unwrap();
+        // f.write_all(model_serialized.as_bytes()).unwrap();
+
+        // // Save trained model (kernel)
+        // let kernel_save_path = format!("{}/{}", save_dir, "model_kernel.json");
+        // let kernel_serialized = serde_json::to_string_pretty(&model.kernel).unwrap();
+        // let mut f = File::create(kernel_save_path).unwrap();
+        // f.write_all(kernel_serialized.as_bytes()).unwrap();
+        // // Save trained model (prior)
+        // let prior_save_path = format!("{}/{}", save_dir, "model_prior.json");
+        // let prior_serialized = serde_json::to_string_pretty(&model.prior).unwrap();
+        // let mut f = File::create(prior_save_path).unwrap();
+        // f.write_all(prior_serialized.as_bytes()).unwrap();
+        // // Save trained model (noise)
+        // let noise_save_path = format!("{}/{}", save_dir, "model_noise.json");
+        // let noise_serialized = serde_json::to_string_pretty(&model.noise).unwrap();
+        // let mut f = File::create(noise_save_path).unwrap();
+        // f.write_all(noise_serialized.as_bytes()).unwrap();
 
     } else if exec_mode == "predict" {
 
