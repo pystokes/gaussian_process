@@ -1,6 +1,10 @@
 use std::env;
+use std::fs::File;
+use std::io::prelude::*;
 
 use friedrich::gaussian_process::GaussianProcess;
+use serde::Serialize;
+
 mod lib;
 
 fn main() {
@@ -117,9 +121,16 @@ fn main() {
         println!("Fitting...");
         let model = GaussianProcess::default(train_exp, train_obj);
 
-        // Save trained model
-        let model_save_path = format!("{}/{}", save_dir, "gp.model");
-        lib::file_io::save_model(&model, &model_save_path);
+        // Save trained model (kernel)
+        let kernel_save_path = format!("{}/{}", save_dir, "gp_kernel.model");
+        let kernel_serialized = serde_json::to_string(&model.kernel).unwrap();
+        let mut f = File::create(kernel_save_path).unwrap();
+        f.write_all(kernel_serialized.as_bytes()).unwrap();
+        // Save trained model (prior)
+        let prior_save_path = format!("{}/{}", save_dir, "gp_prior.model");
+        let prior_serialized = serde_json::to_string(&model.prior).unwrap();
+        let mut f = File::create(prior_save_path).unwrap();
+        f.write_all(prior_serialized.as_bytes()).unwrap();
 
         // Load test data
         let test_exp_path = format!("{}/{}", save_dir, "test_exp.csv");
@@ -143,13 +154,13 @@ fn main() {
         // Save results
         let result_save_path = format!("{}/{}", save_dir, "result.csv");
         lib::postprocess::save_results(
-           test_exp,
-           means,
-           variances,
-           stds,
-           uppers,
-           lowers,
-           &result_save_path
+          test_exp,
+          means,
+          variances,
+          stds,
+          uppers,
+          lowers,
+          &result_save_path
         );
     } else if exec_mode == "visualize" {
         // Load result.csv

@@ -1,10 +1,10 @@
 use std::fs::File;
 use std::io::prelude::*;
 
-use friedrich::gaussian_process::GaussianProcess;
-use friedrich::kernel::Kernel;
-use friedrich::prior::Prior;
-use serde::{Serialize, Deserialize};
+// use friedrich::gaussian_process::GaussianProcess;
+// use friedrich::kernel::Kernel;
+// use friedrich::prior::Prior;
+use serde::Deserialize;
 
 #[derive(Deserialize)]
 struct TSRecord {
@@ -176,13 +176,11 @@ pub fn load_result(csv_path: &String) -> Result<Vec<Vec<f64>>, csv::Error> {
     Ok(ts)
 }
 
-pub fn save_model<T: Kernel, U: Prior>(model: &GaussianProcess<T, U>, save_path: &String) {
-    println!("lib::file_io::handle_model");
-    //let _model = model;
-    //let _save_path = save_path;
+// pub fn save_model<T: Kernel, U: Prior>(model: GaussianProcess<T, U>, save_path: &String) {
+//     println!("lib::file_io::handle_model");
 
-    let serialized = model.serialize();
-
-    let mut f = File::create(save_path).unwrap();
-    //f.write_all(serialized).unwrap();
-}
+//     let serialized = serde_json::to_string(&model.kernel).unwrap();
+//     println!("{}", serialized);
+//     let mut f = File::create(save_path).unwrap();
+//     f.write_all(serialized.as_bytes()).unwrap();
+// }
