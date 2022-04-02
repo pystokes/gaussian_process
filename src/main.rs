@@ -122,13 +122,13 @@ fn main() {
         let model = GaussianProcess::default(train_exp, train_obj);
 
         // Save trained model (kernel)
-        let kernel_save_path = format!("{}/{}", save_dir, "gp_kernel.model");
-        let kernel_serialized = serde_json::to_string(&model.kernel).unwrap();
+        let kernel_save_path = format!("{}/{}", save_dir, "model_kernel.json");
+        let kernel_serialized = serde_json::to_string_pretty(&model.kernel).unwrap();
         let mut f = File::create(kernel_save_path).unwrap();
         f.write_all(kernel_serialized.as_bytes()).unwrap();
         // Save trained model (prior)
-        let prior_save_path = format!("{}/{}", save_dir, "gp_prior.model");
-        let prior_serialized = serde_json::to_string(&model.prior).unwrap();
+        let prior_save_path = format!("{}/{}", save_dir, "model_prior.json");
+        let prior_serialized = serde_json::to_string_pretty(&model.prior).unwrap();
         let mut f = File::create(prior_save_path).unwrap();
         f.write_all(prior_serialized.as_bytes()).unwrap();
 
