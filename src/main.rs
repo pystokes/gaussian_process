@@ -123,14 +123,9 @@ fn main() {
         let model = GaussianProcess::default(train_exp, train_obj);
 
         let model_save_path = format!("{}/{}", save_dir, "model_kernel.json");
-        //let model_serialized = serde_json::to_string_pretty(&model).unwrap();
-        let mut f = File::create(model_save_path).unwrap();
-        bincode::serialize_into(&mut f, &model).unwrap();
-        // let bytes = bincode::serialize(&model).unwrap();
-
-        // let model_serialized = model.as_bytes().unwrap();
-        // let mut f = File::create(model_save_path).unwrap();
-        // f.write_all(model_serialized.as_bytes()).unwrap();
+        let model_serialized = serde_json::to_string_pretty(&model).unwrap();
+        //let mut f = File::create(model_save_path).unwrap();
+        //bincode::serialize(&model.training_inputs).expect("Error");
 
         // // Save trained model (kernel)
         // let kernel_save_path = format!("{}/{}", save_dir, "model_kernel.json");
